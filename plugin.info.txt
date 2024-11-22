@@ -1,0 +1,7 @@
+base pagestats
+author Hei3enberg
+email deine_email@example.com
+date 2024-11-22
+name Page Stats Plugin
+desc Zeigt die Anzahl der Seiten und den Speicherplatz im Wiki an.
+url https://github.com/Hei3enberg/pagestats
