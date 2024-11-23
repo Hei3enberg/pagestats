@@ -14,11 +14,21 @@ class action_plugin_pagestats extends DokuWiki_Action_Plugin {
     }
 
     public function add_stats_to_page(Doku_Event $event, $param) {
+        list($pageCount, $totalSizeMB) = $this->getPageStats();
+
+        // Statistiken einzeln im Meta-Header speichern
+        $event->data['meta'][] = ['name' => 'pagestatspage', 'content' => $pageCount];
+        $event->data['meta'][] = ['name' => 'pagestatsmb', 'content' => $totalSizeMB];
+    }
+
+    private function getPageStats() {
         $dataPath = DOKU_INC . 'data/pages';
+
+        if (!is_dir($dataPath)) return [0, 0];
+
         $pageCount = 0;
         $totalSize = 0;
 
-        // Alle Dateien im data/pages Verzeichnis durchsuchen
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dataPath));
         foreach ($iterator as $file) {
             if ($file->isFile() && $file->getExtension() === 'txt') {
@@ -27,11 +37,6 @@ class action_plugin_pagestats extends DokuWiki_Action_Plugin {
             }
         }
 
-        // Speicherplatz berechnen und formatieren
-        $totalSizeMB = round($totalSize / (1024 * 1024), 2);
-
-        // Ausgabe als Footer-Komponente oder an einer anderen Stelle
-        $stats = "Anzahl der Seiten: $pageCount | Gesamter Speicherplatz: $totalSizeMB MB";
-        $event->data['meta'][] = ['name' => 'pagestats', 'content' => $stats];
+        return [$pageCount, round($totalSize / (1024 * 1024), 2)];
     }
 }
