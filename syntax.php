@@ -1,86 +1,86 @@
 <?php
 /**
  * DokuWiki Plugin pagestats (Syntax Component)
- * Allows using ~~PAGESTATS~~, ~~PAGESTATSPAGE~~, and ~~PAGESTATSMB~~ to display stats.
+ * Allows using ~~PAGESTATSPAGE~~, ~~PAGESTATSMB~~, ~~MEDIASTATSPAGE~~, and ~~MEDIASTATSMB~~ to display stats.
  */
 
 if (!defined('DOKU_INC')) die();
 
 class syntax_plugin_pagestats extends DokuWiki_Syntax_Plugin {
 
-    /**
-     * Gibt an, wo die Syntax verarbeitet wird.
-     */
     public function getType() {
-        return 'substition'; // Die Syntax wird ersetzt.
+        return 'substition';
     }
 
-    /**
-     * Reihenfolge der Plugin-Verarbeitung.
-     */
     public function getSort() {
-        return 999; // Geringere Zahl = höhere Priorität
+        return 999;
     }
 
-    /**
-     * Verbindung zur Syntax herstellen.
-     */
     public function connectTo($mode) {
-        $this->Lexer->addSpecialPattern('~~PAGESTATS(?:PAGE|MB)?~~', $mode, 'plugin_pagestats');
+        $this->Lexer->addSpecialPattern('~~PAGESTATSPAGE~~', $mode, 'plugin_pagestats');
+        $this->Lexer->addSpecialPattern('~~PAGESTATSMB~~', $mode, 'plugin_pagestats');
+        $this->Lexer->addSpecialPattern('~~MEDIASTATSPAGE~~', $mode, 'plugin_pagestats');
+        $this->Lexer->addSpecialPattern('~~MEDIASTATSMB~~', $mode, 'plugin_pagestats');
     }
 
-    /**
-     * Verarbeitung der Syntax und Rückgabe der Daten.
-     */
     public function handle($match, $state, $pos, Doku_Handler $handler) {
-        $type = 'all'; // Standard: alles anzeigen
-        if (strpos($match, 'PAGE') !== false) $type = 'page';
-        if (strpos($match, 'MB') !== false) $type = 'mb';
-
-        return ['type' => $type];
+        return trim($match, '~'); // Gibt die genaue Syntax zurück
     }
 
-    /**
-     * Verarbeitung und Ausgabe der Syntax.
-     */
-    public function render($mode, Doku_Renderer $renderer, $data) {
-        if ($mode !== 'xhtml') return false;
+public function render($mode, Doku_Renderer $renderer, $data) {
+    if ($mode !== 'xhtml') return false;
 
-        list($pageCount, $totalSizeMB) = $this->getPageStats();
+    $dataPathPages = DOKU_INC . 'data/pages';
+    $dataPathMedia = DOKU_INC . 'data/media';
 
-        // Statistiken je nach Typ ausgeben
-        switch ($data['type']) {
-            case 'page':
-                $renderer->doc .= "<span><strong>" . hsc($this->getLang('page_stats_count')) . "</strong> " . hsc($pageCount) . "</span>";
-                break;
-            case 'mb':
-                $renderer->doc .= "<span><strong>" . hsc($this->getLang('page_stats_size')) . "</strong> " . hsc($totalSizeMB) . " MB</span>";
-                break;
-            default:
-                $renderer->doc .= "<span><strong>" . hsc($this->getLang('page_stats_count')) . "</strong> " . hsc($pageCount) . "</span> | ";
-                $renderer->doc .= "<span><strong>" . hsc($this->getLang('page_stats_size')) . "</strong> " . hsc($totalSizeMB) . " MB</span>";
-                break;
+    $stats = [
+        'PAGESTATSPAGE' => $this->countFiles($dataPathPages, 'txt'),
+        'PAGESTATSMB' => $this->calculateSize($dataPathPages, 'txt'),
+        'MEDIASTATSPAGE' => $this->countFiles($dataPathMedia, ''),
+        'MEDIASTATSMB' => $this->calculateSize($dataPathMedia, '')
+    ];
+
+    if (isset($stats[$data])) {
+        // Zahl direkt ausgeben
+        $value = $stats[$data];
+
+        // "MB" bei Speicherangaben anhängen
+        if (in_array($data, ['PAGESTATSMB', 'MEDIASTATSMB'])) {
+            $value .= " MB";
         }
 
-        return true;
+        // Ausgabe in den Renderer einfügen
+        $renderer->doc .= hsc($value);
     }
 
-    private function getPageStats() {
-        $dataPath = DOKU_INC . 'data/pages';
+    return true;
+}
 
-        if (!is_dir($dataPath)) return [0, 0];
+    private function countFiles($path, $extension) {
+        if (!is_dir($path)) return 0;
 
-        $pageCount = 0;
-        $totalSize = 0;
-
-        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dataPath));
+        $count = 0;
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
         foreach ($iterator as $file) {
-            if ($file->isFile() && $file->getExtension() === 'txt') {
-                $pageCount++;
+            if ($file->isFile() && ($extension === '' || $file->getExtension() === $extension)) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    private function calculateSize($path, $extension) {
+        if (!is_dir($path)) return 0;
+
+        $totalSize = 0;
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
+        foreach ($iterator as $file) {
+            if ($file->isFile() && ($extension === '' || $file->getExtension() === $extension)) {
                 $totalSize += $file->getSize();
             }
         }
 
-        return [$pageCount, round($totalSize / (1024 * 1024), 2)];
+        return round($totalSize / (1024 * 1024), 2); // In MB
     }
 }

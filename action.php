@@ -1,7 +1,7 @@
 <?php
 /**
  * DokuWiki Plugin pagestats (Action Component)
- * Counts the number of pages and calculates the total size.
+ * Counts the number of pages and media files and calculates their total size.
  */
 
 if (!defined('DOKU_INC')) die();
@@ -9,34 +9,50 @@ if (!defined('DOKU_INC')) die();
 class action_plugin_pagestats extends DokuWiki_Action_Plugin {
 
     public function register(Doku_Event_Handler $controller) {
-        // Füge eine Aktion hinzu, z. B. für eine Ausgabe im Footer oder einer speziellen Syntax
         $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'add_stats_to_page');
     }
 
     public function add_stats_to_page(Doku_Event $event, $param) {
-        list($pageCount, $totalSizeMB) = $this->getPageStats();
+        $dataPathPages = DOKU_INC . 'data/pages';
+        $dataPathMedia = DOKU_INC . 'data/media';
 
-        // Statistiken einzeln im Meta-Header speichern
-        $event->data['meta'][] = ['name' => 'pagestatspage', 'content' => $pageCount];
-        $event->data['meta'][] = ['name' => 'pagestatsmb', 'content' => $totalSizeMB];
+        $stats = [
+            'pagestatspage' => $this->countFiles($dataPathPages, 'txt'),
+            'pagestatsmb' => $this->calculateSize($dataPathPages, 'txt'),
+            'mediastatspage' => $this->countFiles($dataPathMedia, ''),
+            'mediastatsmb' => $this->calculateSize($dataPathMedia, '')
+        ];
+
+        foreach ($stats as $name => $value) {
+            $event->data['meta'][] = ['name' => $name, 'content' => $value];
+        }
     }
 
-    private function getPageStats() {
-        $dataPath = DOKU_INC . 'data/pages';
+    private function countFiles($path, $extension) {
+        if (!is_dir($path)) return 0;
 
-        if (!is_dir($dataPath)) return [0, 0];
-
-        $pageCount = 0;
-        $totalSize = 0;
-
-        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dataPath));
+        $count = 0;
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
         foreach ($iterator as $file) {
-            if ($file->isFile() && $file->getExtension() === 'txt') {
-                $pageCount++;
+            if ($file->isFile() && ($extension === '' || $file->getExtension() === $extension)) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    private function calculateSize($path, $extension) {
+        if (!is_dir($path)) return 0;
+
+        $totalSize = 0;
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
+        foreach ($iterator as $file) {
+            if ($file->isFile() && ($extension === '' || $file->getExtension() === $extension)) {
                 $totalSize += $file->getSize();
             }
         }
 
-        return [$pageCount, round($totalSize / (1024 * 1024), 2)];
+        return round($totalSize / (1024 * 1024), 2); // In MB
     }
 }
