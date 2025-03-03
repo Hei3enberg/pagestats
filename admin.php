@@ -40,7 +40,7 @@ class admin_plugin_pagestats extends DokuWiki_Admin_Plugin {
             $helper = plugin_load('helper', 'pagestats');
             if ($helper) {
                 $helper->clearCache();
-                msg('PageStats cache cleared successfully', 1);
+                msg($this->getLang('admin_cache_cleared'), 1);
             }
         }
     }
@@ -59,9 +59,6 @@ class admin_plugin_pagestats extends DokuWiki_Admin_Plugin {
         }
         
         $stats = $helper->getStats();
-        
-        // Debug-Ausgabe der verfügbaren Sprach-Schlüssel
-        // echo '<pre>Verfügbare Sprach-Schlüssel: ' . print_r($this->lang, true) . '</pre>';
         
         echo '<h1>' . $this->getLang('admin_title') . '</h1>';
         
@@ -100,12 +97,14 @@ class admin_plugin_pagestats extends DokuWiki_Admin_Plugin {
         $cacheTime = $this->getConf('cacheTime');
         echo '<p>';
         if ($cacheTime > 0) {
-            echo sprintf('Cache-Zeit: %d Sekunden (%s Stunden)', 
+            echo sprintf('Cache-Zeit: %d Sekunden (%.1f Stunden)', 
                 $cacheTime, 
-                number_format($cacheTime / 3600, 1)
+                $cacheTime / 3600
             );
+            echo '<br/><small>Die Cache-Zeit kann im DokuWiki Admin → Konfiguration geändert werden.</small>';
         } else {
-            echo 'Cache ist deaktiviert';
+            echo 'Cache ist aktuell deaktiviert (cacheTime = 0)';
+            echo '<br/><small>Der Cache kann im DokuWiki Admin → Konfiguration aktiviert werden.</small>';
         }
         echo '</p>';
         

@@ -1,9 +1,8 @@
 <?php
 /**
- * Configuration metadata for DokuWiki Plugin pagestats
- * Defines how configuration options are displayed in the Admin interface
+ * Default settings for the pagestats plugin
  */
 
-$meta['cacheTime'] = array('numeric', '_min' => 0);
-$meta['excludeNamespaces'] = array('string');
-$meta['showUnit'] = array('onoff');
+$conf['cacheTime'] = 3600; // 1 hour in seconds
+$conf['excludeNamespaces'] = '';
+$conf['showUnit'] = 1;

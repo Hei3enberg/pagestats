@@ -8,7 +8,7 @@ if (!defined('DOKU_INC')) die();
 
 class helper_plugin_pagestats extends DokuWiki_Plugin {
     private $cache = null;
-    private $cacheTime = 3600; // Cache for 1 hour by default
+    private $cacheTime = 3600; // Cache standardmäßig für 1 Stunde
 
     /**
      * Constructor - reads configuration
