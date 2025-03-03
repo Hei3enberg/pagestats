@@ -7,10 +7,10 @@ This plugin counts the number of pages and media files in your DokuWiki and calc
 - Display the total size of all pages in megabytes (MB).
 - Display the total number of media files.
 - Display the total size of all media files in megabytes (MB).
-- Performance optimization through caching
+- Performance optimization through caching (default: 1 hour)
 - Admin interface for cache management
 - Configuration options for excluding namespaces
-- Multilingual support
+- Multilingual support (English/German)
 
 ## Installation
 1. Download the ZIP file from the latest release.
@@ -20,7 +20,7 @@ This plugin counts the number of pages and media files in your DokuWiki and calc
 ## Configuration
 You can configure the plugin in the Admin -> Configuration Settings area:
 
-- **cacheTime**: Cache lifetime in seconds (0 to disable caching)
+- **cacheTime**: Cache lifetime in seconds (default: 3600 = 1 hour, 0 to disable caching)
 - **excludeNamespaces**: Comma-separated list of namespaces to exclude from statistics
 - **showUnit**: Whether to show "MB" unit after size values
 
@@ -38,14 +38,15 @@ To avoid incorrect or outdated statistics due to page caching, add the `~~NOCACH
 ## Admin Interface
 The plugin adds an admin page under "Admin -> Page Stats" where you can:
 - View current statistics
-- Clear the statistics cache
+- See information about the current cache settings
+- Clear the statistics cache manually
 - See usage instructions
 
 ## Performance
-The plugin caches results to improve performance. The cache is automatically cleared when:
+The plugin caches results to improve performance. By default, the cache is set to 1 hour (3600 seconds). The cache is automatically cleared when:
 - Pages are created, edited, or deleted
 - Media files are uploaded or deleted
-- The cache expires (configurable)
+- The cache expires (configurable in Admin -> Configuration)
 - The cache is manually cleared via the admin interface
 
 ## Notes
@@ -54,6 +55,12 @@ The plugin caches results to improve performance. The cache is automatically cle
 - For large wikis, consider increasing the cache time to reduce server load.
 
 ## Changelog
+
+### 2.1.1 (2025-03-03)
+- Fixed cache time configuration issue (cache is now enabled by default with 1 hour lifetime)
+- Improved multilingual support for cache management settings
+- Updated admin interface to show cache time information in the current language
+- Fixed documentation to clarify cache settings
 
 ### 2.1.0 (2025-03-03)
 - Added multilingual admin interface (English/German)
