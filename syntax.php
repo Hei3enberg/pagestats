@@ -24,63 +24,33 @@ class syntax_plugin_pagestats extends DokuWiki_Syntax_Plugin {
     }
 
     public function handle($match, $state, $pos, Doku_Handler $handler) {
-        return trim($match, '~'); // Gibt die genaue Syntax zurück
+        return trim($match, '~');
     }
 
-public function render($mode, Doku_Renderer $renderer, $data) {
-    if ($mode !== 'xhtml') return false;
+    public function render($mode, Doku_Renderer $renderer, $data) {
+        if ($mode !== 'xhtml') return false;
 
-    $dataPathPages = DOKU_INC . 'data/pages';
-    $dataPathMedia = DOKU_INC . 'data/media';
+        /** @var helper_plugin_pagestats $helper */
+        $helper = plugin_load('helper', 'pagestats');
+        if (!$helper) return false;
 
-    $stats = [
-        'PAGESTATSPAGE' => $this->countFiles($dataPathPages, 'txt'),
-        'PAGESTATSMB' => $this->calculateSize($dataPathPages, 'txt'),
-        'MEDIASTATSPAGE' => $this->countFiles($dataPathMedia, ''),
-        'MEDIASTATSMB' => $this->calculateSize($dataPathMedia, '')
-    ];
+        $stats = $helper->getStats();
 
-    if (isset($stats[$data])) {
-        // Zahl direkt ausgeben
-        $value = $stats[$data];
+        if (isset($stats[$data])) {
+            $value = $stats[$data];
 
-        // "MB" bei Speicherangaben anhängen
-        if (in_array($data, ['PAGESTATSMB', 'MEDIASTATSMB'])) {
-            $value .= " MB";
-        }
-
-        // Ausgabe in den Renderer einfügen
-        $renderer->doc .= hsc($value);
-    }
-
-    return true;
-}
-
-    private function countFiles($path, $extension) {
-        if (!is_dir($path)) return 0;
-
-        $count = 0;
-        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
-        foreach ($iterator as $file) {
-            if ($file->isFile() && ($extension === '' || $file->getExtension() === $extension)) {
-                $count++;
+            // Add "MB" unit if configured and it's a size value
+            if ($this->getConf('showUnit') && in_array($data, ['PAGESTATSMB', 'MEDIASTATSMB'])) {
+                $value .= " " . $this->getLang('unit_mb');
             }
+
+            // Debug-Modus: Zeige die Sprachschlüssel
+            // $renderer->doc .= '<pre>Verfügbare Sprachschlüssel: ' . print_r($this->lang, true) . '</pre>';
+
+            // Output zu renderer
+            $renderer->doc .= hsc($value);
         }
 
-        return $count;
-    }
-
-    private function calculateSize($path, $extension) {
-        if (!is_dir($path)) return 0;
-
-        $totalSize = 0;
-        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
-        foreach ($iterator as $file) {
-            if ($file->isFile() && ($extension === '' || $file->getExtension() === $extension)) {
-                $totalSize += $file->getSize();
-            }
-        }
-
-        return round($totalSize / (1024 * 1024), 2); // In MB
+        return true;
     }
 }

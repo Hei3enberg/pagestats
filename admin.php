@@ -60,44 +60,61 @@ class admin_plugin_pagestats extends DokuWiki_Admin_Plugin {
         
         $stats = $helper->getStats();
         
-        echo '<h1>Page Stats Overview</h1>';
+        // Debug-Ausgabe der verfügbaren Sprach-Schlüssel
+        // echo '<pre>Verfügbare Sprach-Schlüssel: ' . print_r($this->lang, true) . '</pre>';
+        
+        echo '<h1>' . $this->getLang('admin_title') . '</h1>';
         
         echo '<div class="level1">';
-        echo '<p>This plugin provides statistics about your DokuWiki installation.</p>';
+        echo '<p>' . $this->getLang('admin_intro') . '</p>';
         echo '</div>';
         
-        echo '<h2>Current Statistics</h2>';
+        echo '<h2>' . $this->getLang('admin_current_stats') . '</h2>';
         echo '<div class="table">';
         echo '<table class="inline">';
         echo '<tr><th>Statistic</th><th>Value</th></tr>';
-        echo '<tr><td>Total Pages</td><td>' . hsc($stats['PAGESTATSPAGE']) . '</td></tr>';
-        echo '<tr><td>Pages Size</td><td>' . hsc($stats['PAGESTATSMB']) . ' MB</td></tr>';
-        echo '<tr><td>Total Media Files</td><td>' . hsc($stats['MEDIASTATSPAGE']) . '</td></tr>';
-        echo '<tr><td>Media Size</td><td>' . hsc($stats['MEDIASTATSMB']) . ' MB</td></tr>';
+        echo '<tr><td>' . $this->getLang('admin_total_pages') . '</td><td>' . hsc($stats['PAGESTATSPAGE']) . '</td></tr>';
+        echo '<tr><td>' . $this->getLang('admin_pages_size') . '</td><td>' . hsc($stats['PAGESTATSMB']) . ' ' . $this->getLang('unit_mb') . '</td></tr>';
+        echo '<tr><td>' . $this->getLang('admin_total_media') . '</td><td>' . hsc($stats['MEDIASTATSPAGE']) . '</td></tr>';
+        echo '<tr><td>' . $this->getLang('admin_media_size') . '</td><td>' . hsc($stats['MEDIASTATSMB']) . ' ' . $this->getLang('unit_mb') . '</td></tr>';
         echo '</table>';
         echo '</div>';
         
-        echo '<h2>Usage Instructions</h2>';
+        echo '<h2>' . $this->getLang('admin_usage_title') . '</h2>';
         echo '<div class="level2">';
-        echo '<p>You can use the following syntax in any wiki page:</p>';
+        echo '<p>' . $this->getLang('admin_usage_text') . '</p>';
         echo '<ul>';
-        echo '<li><code>~~PAGESTATSPAGE~~</code> - Displays the total number of pages</li>';
-        echo '<li><code>~~PAGESTATSMB~~</code> - Displays the total size of all pages in MB</li>';
-        echo '<li><code>~~MEDIASTATSPAGE~~</code> - Displays the total number of media files</li>';
-        echo '<li><code>~~MEDIASTATSMB~~</code> - Displays the total size of all media files in MB</li>';
+        echo '<li><code>~~PAGESTATSPAGE~~</code> - ' . $this->getLang('page_stats_count') . '</li>';
+        echo '<li><code>~~PAGESTATSMB~~</code> - ' . $this->getLang('page_stats_size') . '</li>';
+        echo '<li><code>~~MEDIASTATSPAGE~~</code> - ' . $this->getLang('media_stats_count') . '</li>';
+        echo '<li><code>~~MEDIASTATSMB~~</code> - ' . $this->getLang('media_stats_size') . '</li>';
         echo '</ul>';
-        echo '<p><strong>Note:</strong> To avoid cached statistics, add <code>~~NOCACHE~~</code> at the beginning of the page.</p>';
+        echo '<p><strong>' . $this->getLang('admin_nocache_note') . '</strong></p>';
         echo '</div>';
         
-        echo '<h2>Cache Management</h2>';
+        echo '<h2>' . $this->getLang('admin_cache_title') . '</h2>';
         echo '<div class="level2">';
-        echo '<p>The statistics are cached to improve performance. You can clear the cache if needed:</p>';
+        echo '<p>' . $this->getLang('admin_cache_text') . '</p>';
         
+        // Cache-Informationen anzeigen
+        $cacheTime = $this->getConf('cacheTime');
+        echo '<p>';
+        if ($cacheTime > 0) {
+            echo sprintf('Cache-Zeit: %d Sekunden (%s Stunden)', 
+                $cacheTime, 
+                number_format($cacheTime / 3600, 1)
+            );
+        } else {
+            echo 'Cache ist deaktiviert';
+        }
+        echo '</p>';
+        
+        // Cache leeren Formular
         $form = new Doku_Form(array('method' => 'post', 'id' => 'pagestats_form'));
         $form->addHidden('id', $ID);
         $form->addHidden('action', 'clearCache');
         $form->addHidden('sectok', getSecurityToken());
-        $form->addElement(form_makeButton('submit', '', 'Clear Statistics Cache'));
+        $form->addElement(form_makeButton('submit', '', $this->getLang('admin_clear_cache')));
         echo $form->getForm();
         
         echo '</div>';

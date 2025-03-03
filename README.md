@@ -55,6 +55,13 @@ The plugin caches results to improve performance. The cache is automatically cle
 
 ## Changelog
 
+### 2.1.0 (2025-03-03)
+- Added multilingual admin interface (English/German)
+- Improved configuration management with UI controls
+- Added automatic cache invalidation when settings change
+- Enhanced cache management with visual feedback
+- Better integration with DokuWiki's language system
+
 ### 2.0.0 (2025-03-03)
 - Added caching mechanism for better performance
 - New admin interface for viewing stats and managing cache

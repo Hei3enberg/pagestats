@@ -5,4 +5,4 @@ date 2025-03-03
 name Page Stats Plugin
 desc Displays the number of pages, media files, and their storage usage in the wiki.
 url https://github.com/Hei3enberg/pagestats
-version 2.0.0
+version 2.1.0

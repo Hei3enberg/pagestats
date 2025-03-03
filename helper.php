@@ -19,6 +19,22 @@ class helper_plugin_pagestats extends DokuWiki_Plugin {
         if (is_numeric($cacheTime)) {
             $this->cacheTime = (int)$cacheTime;
         }
+        
+        // Wenn die Cache-Zeit geändert wurde, Cache löschen
+        $optionChanged = false;
+        if (isset($_POST['config']['plugin']['pagestats']['cacheTime']) && 
+            $_POST['config']['plugin']['pagestats']['cacheTime'] != $this->cacheTime) {
+            $optionChanged = true;
+        }
+        
+        // Wenn Namensräume ausschließen geändert wurde, Cache löschen
+        if (isset($_POST['config']['plugin']['pagestats']['excludeNamespaces'])) {
+            $optionChanged = true;
+        }
+        
+        if ($optionChanged) {
+            $this->clearCache();
+        }
     }
 
     /**

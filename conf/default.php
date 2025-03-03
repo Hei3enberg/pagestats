@@ -1,8 +1,9 @@
 <?php
 /**
- * Default configuration for DokuWiki Plugin pagestats
+ * Configuration metadata for DokuWiki Plugin pagestats
+ * Defines how configuration options are displayed in the Admin interface
  */
 
-$conf['cacheTime'] = 3600;             // Cache time in seconds (0 to disable)
-$conf['excludeNamespaces'] = '';       // Comma-separated list of namespaces to exclude
-$conf['showUnit'] = true;              // Show "MB" unit after size values
+$meta['cacheTime'] = array('numeric', '_min' => 0);
+$meta['excludeNamespaces'] = array('string');
+$meta['showUnit'] = array('onoff');

@@ -41,6 +41,11 @@ class action_plugin_pagestats extends DokuWiki_Action_Plugin {
         $helper = plugin_load('helper', 'pagestats');
         if ($helper) {
             $helper->clearCache();
+            
+            // Bei manueller Cache-Leerung über das Admin-Formular eine Meldung ausgeben
+            if ($event->name == 'ACTION_ACT_PREPROCESS' && isset($_REQUEST['action']) && $_REQUEST['action'] == 'clearCache') {
+                msg($helper->getLang('admin_cache_cleared'), 1);
+            }
         }
     }
 }

@@ -1,9 +1,7 @@
 <?php
 /**
- * German language file for pagestats plugin
+ * Deutsche Konfigurationssprache für pagestats plugin
  */
-
-$lang['unit_mb'] = 'MB';
 
 // Configuration descriptions
 $lang['cacheTime'] = 'Cache-Lebensdauer in Sekunden (0 zum Deaktivieren)';
