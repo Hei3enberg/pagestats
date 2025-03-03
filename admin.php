@@ -97,14 +97,14 @@ class admin_plugin_pagestats extends DokuWiki_Admin_Plugin {
         $cacheTime = $this->getConf('cacheTime');
         echo '<p>';
         if ($cacheTime > 0) {
-            echo sprintf('Cache-Zeit: %d Sekunden (%.1f Stunden)', 
-                $cacheTime, 
-                $cacheTime / 3600
-            );
-            echo '<br/><small>Die Cache-Zeit kann im DokuWiki Admin → Konfiguration geändert werden.</small>';
+            echo $this->getLang('admin_cache_time') . ' ' . $cacheTime . ' ' . 
+                 $this->getLang('admin_cache_time_seconds') . ' (' . 
+                 number_format($cacheTime / 3600, 1) . ' ' . 
+                 $this->getLang('admin_cache_time_hours') . ')';
+            echo '<br/><small>' . $this->getLang('admin_cache_time_config_hint') . '</small>';
         } else {
-            echo 'Cache ist aktuell deaktiviert (cacheTime = 0)';
-            echo '<br/><small>Der Cache kann im DokuWiki Admin → Konfiguration aktiviert werden.</small>';
+            echo $this->getLang('admin_cache_disabled');
+            echo '<br/><small>' . $this->getLang('admin_cache_enable_hint') . '</small>';
         }
         echo '</p>';
         

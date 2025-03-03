@@ -26,3 +26,11 @@ $lang['admin_cache_title'] = 'Cache-Verwaltung';
 $lang['admin_cache_text'] = 'Die Statistiken werden für bessere Leistung zwischengespeichert. Sie können den Cache bei Bedarf leeren:';
 $lang['admin_clear_cache'] = 'Statistik-Cache leeren';
 $lang['admin_cache_cleared'] = 'PageStats-Cache erfolgreich geleert';
+
+// Cache-Informationen
+$lang['admin_cache_time'] = 'Cache-Zeit:';
+$lang['admin_cache_time_seconds'] = 'Sekunden';
+$lang['admin_cache_time_hours'] = 'Stunden';
+$lang['admin_cache_time_config_hint'] = 'Die Cache-Zeit kann im DokuWiki Admin → Konfiguration geändert werden.';
+$lang['admin_cache_disabled'] = 'Cache ist aktuell deaktiviert (cacheTime = 0)';
+$lang['admin_cache_enable_hint'] = 'Der Cache kann im DokuWiki Admin → Konfiguration aktiviert werden.';

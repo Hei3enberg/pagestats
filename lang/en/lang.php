@@ -26,3 +26,11 @@ $lang['admin_cache_title'] = 'Cache Management';
 $lang['admin_cache_text'] = 'The statistics are cached to improve performance. You can clear the cache if needed:';
 $lang['admin_clear_cache'] = 'Clear Statistics Cache';
 $lang['admin_cache_cleared'] = 'PageStats cache cleared successfully';
+
+// Cache information
+$lang['admin_cache_time'] = 'Cache Lifetime:';
+$lang['admin_cache_time_seconds'] = 'seconds';
+$lang['admin_cache_time_hours'] = 'hours';
+$lang['admin_cache_time_config_hint'] = 'The cache lifetime can be changed in DokuWiki Admin → Configuration.';
+$lang['admin_cache_disabled'] = 'Cache is currently disabled (cacheTime = 0)';
+$lang['admin_cache_enable_hint'] = 'The cache can be enabled in DokuWiki Admin → Configuration.';
